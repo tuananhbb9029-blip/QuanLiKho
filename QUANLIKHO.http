@@ -1,0 +1,6 @@
+@QUANLIKHO_HostAddress = http://localhost:5249
+
+GET {{QUANLIKHO_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
