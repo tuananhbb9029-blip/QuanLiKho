@@ -16,42 +16,31 @@ public partial class AppDbContext : DbContext
     }
 
     public virtual DbSet<Category> Categories { get; set; }
-
     public virtual DbSet<Customer> Customers { get; set; }
-
     public virtual DbSet<Iventory> Iventories { get; set; }
-
     public virtual DbSet<Order> Orders { get; set; }
-
     public virtual DbSet<OrderDetail> OrderDetails { get; set; }
-
     public virtual DbSet<Product> Products { get; set; }
-
     public virtual DbSet<Purchasehistory> Purchasehistories { get; set; }
     public virtual DbSet<Role> Roles { get; set; }
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<TheKho> TheKhos { get; set; }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=BùiTuấnAnh;Database=WarehouseDB;Trusted_Connection=True;TrustServerCertificate=True");
+
+    // Đã xóa hàm OnConfiguring ở đây vì đã được cấu hình chung trong Program.cs
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.Categoryid).HasName("PK__Category__19060623CF60C42D");
-
             entity.ToTable("Category");
-
             entity.Property(e => e.Categoryname).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Customerid).HasName("PK__Customer__A4AD589009E9D89A");
-
             entity.ToTable("Customer");
-
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -65,9 +54,7 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<Iventory>(entity =>
         {
             entity.HasKey(e => e.Productid).HasName("PK__Iventory__B40F3AA5ACFBEA7B");
-
             entity.ToTable("Iventory");
-
             entity.Property(e => e.Productid).ValueGeneratedNever();
 
             entity.HasOne(d => d.Product).WithOne(p => p.Iventory)
@@ -79,7 +66,6 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<Order>(entity =>
         {
             entity.HasKey(e => e.Orderid).HasName("PK__Orders__C39F40176EB097D4");
-
             entity.Property(e => e.OrderDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
@@ -93,9 +79,7 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<OrderDetail>(entity =>
         {
             entity.HasKey(e => e.OrderDetarilid).HasName("PK__OrderDet__663DE7BEA126116E");
-
             entity.ToTable("OrderDetail");
-
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails)
@@ -112,9 +96,7 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.Productid).HasName("PK__Product__B40F3AA518197992");
-
             entity.ToTable("Product");
-
             entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Producname).HasMaxLength(100);
 
@@ -155,9 +137,7 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<Purchasehistory>(entity =>
         {
             entity.HasKey(e => e.PurchasehistoryId).HasName("PK__Purchase__4893688F64BD871F");
-
             entity.ToTable("Purchasehistory");
-
             entity.Property(e => e.Purchasedate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");

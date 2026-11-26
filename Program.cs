@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using QUANLIKHO.Models;
+using QUANLIKHO.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,14 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+// Đăng ký các Service (DI)
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IPurchaseHistoryService, PurchaseHistoryService>();
 
 var app = builder.Build();
 

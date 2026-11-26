@@ -1,66 +1,45 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using QUANLIKHO.DTO;
-using QUANLIKHO.Models;
+using QUANLIKHO.Services;
 using static QUANLIKHO.DTO.CategoryDtos;
+
 namespace QUANLIKHO.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     public class CategoriesController : ControllerBase
     {
-        private readonly AppDbContext _db;
-        public CategoriesController(AppDbContext db) => _db = db;
+        private readonly ICategoryService _categoryService;
+
+        public CategoriesController(ICategoryService categoryService) => _categoryService = categoryService;
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CategoryCreateDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.Categoryname))
-                return BadRequest("khong ton tai loai san pham");
-            var Category = new Category
-            {
-                Categoryname = dto.Categoryname
-            };
-            _db.Categories.Add(Category);
-            await _db.SaveChangesAsync();
+            var res = await _categoryService.CreateAsync(dto);
+            if (!res.Success)
+                return StatusCode(res.StatusCode, res.Message);
 
-            return Ok(new
-            {
-                Message = "them thanh cong roi nha",
-                Category.Categoryid,
-                dto.Categoryname
-            });
+            return Ok(res.Data);
         }
-        
+
         [HttpGet]
-        public async Task<IActionResult> GetAll(int Page = 1, int PageSize = 50)
+        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 50)
         {
-            if (Page < 1) Page = 1;
-            if (PageSize < 1 || PageSize > 200) PageSize = 50;
+            var res = await _categoryService.GetAllAsync(page, pageSize);
+            if (!res.Success)
+                return StatusCode(res.StatusCode, res.Message);
 
-            var query = _db.Categories.AsNoTracking();
-            var total = await query.CountAsync();
+            return Ok(res.Data);
+        }
 
-            var items = await query
-                .OrderBy(c => c.Categoryid)
-                .Skip((Page - 1) * PageSize)
-                .Take(PageSize)
-                .Select(c => new
-                {
-                    c.Categoryid,
-                    c.Categoryname,
-                    ProductCount = c.Products.Count()
-                })
-                .ToListAsync();
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var res = await _categoryService.GetByIdAsync(id);
+            if (!res.Success)
+                return StatusCode(res.StatusCode, res.Message);
 
-            return Ok(new
-            {
-                CurrentPage = Page,
-                PageSize = PageSize,
-                TotalCount = total,
-                TotalPages = (int)Math.Ceiling(total / (double)PageSize),
-                Items = items
-            });
+            return Ok(res.Data);
         }
     }
 }
